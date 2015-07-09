@@ -40,6 +40,8 @@
     <Window.InputBindings>
         <KeyBinding Command="{x:Static c:MainWindow.getNextImage}" Key="Right" />
         <KeyBinding Command="{x:Static c:MainWindow.getPrevImage}" Key="Left" />
+        <KeyBinding Command="{x:Static c:MainWindow.RotateRight}" Key="R"/>
+        <KeyBinding Command="{x:Static c:MainWindow.RotateLeft}" Modifiers="Shift"  Key="R"/>
     </Window.InputBindings>
     <Grid>
         <Menu HorizontalAlignment="Stretch" VerticalAlignment="Top">

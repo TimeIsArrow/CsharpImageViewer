@@ -194,7 +194,15 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void RotateLeftCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            TransformedBitmap tb = new TransformedBitmap();
+            tb.BeginInit();
+            tb.Source = imageHandle;
+            rotate.Angle = rotate.Angle - 90;
+            tb.Transform = rotate;
+            tb.EndInit();
+            pictureview1.Source = tb;
 
+            Debug.WriteLine(rotate.Angle);
         }
 
         /// <summary>
@@ -237,6 +245,7 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void getNextImageCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            rotate.Angle = 0;
             imageHandle = controller.getNextImage();
             pictureview1.Source = imageHandle;
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
@@ -249,6 +258,7 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void getPrevImageCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            rotate.Angle = 0;
             imageHandle = controller.getPrevImage();
             pictureview1.Source = imageHandle;
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
