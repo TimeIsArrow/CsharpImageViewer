@@ -1,0 +1,75 @@
+﻿<Window x:Class="ImageViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:ImageViewer"
+        Title="画像ビューア" Height="350" Width="525">
+    <Window.CommandBindings>
+        <!-- [ファイル]-[開く]用コマンド -->
+        <CommandBinding Command="Open" Executed="OpenFileCmd_Executed"/>
+        <!-- [ファイル]-[終了]用コマンド -->
+        <CommandBinding Command="Close" Executed="AppCloseCmd_Executed"/>
+        <!-- [編集]-[切り取り]用コマンド -->
+        <CommandBinding Command="Cut" Executed="CutCmd_Executed"/>
+        <!-- [編集]-[コピー]用コマンド -->
+        <CommandBinding Command="Copy" Executed="CopyCmd_Executed"/>
+        <!-- [編集]-[貼り付け]用コマンド -->
+        <CommandBinding Command="Paste" Executed="PasteCmd_Executed"/>
+        
+        <!-- [表示]-[全画面表示]用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.ViewFullScreen}" Executed="ViewFullScreenCmd_Executed"/>
+        <!-- [表示]-[右に90°回転]用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.RotateRight}" Executed="RotateRightCmd_Executed"/>
+        <!-- [表示]-[左に90°回転]用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.RotateLeft}" Executed="RotateLeftCmd_Executed"/>
+        <!-- [表示]-[拡大]用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.Zoom}" Executed="ZoomCmd_Executed"/>
+        <!-- [表示]-[縮小]用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.Reduction}" Executed="ReductionCmd_Executed"/>
+        <!-- [表示]-[画面に合わせる]用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.FitWindow}" Executed="FitWindowCmd_Executed"/>
+        <!-- [表示]-[幅に合わせる]用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.FitWidth}" Executed="FitWidthCmd_Executed"/>
+        <!-- 次の画像を表示コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.getNextImage}" Executed="getNextImageCmd_Executed"/>
+        <!-- 前の画像を表示コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.getPrevImage}" Executed="getPrevImageCmd_Executed"/>
+        
+        <!-- [ヘルプ]-[バージョン情報]用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.ShowVersion}" Executed="ShowVersionCmd_Executed"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Command="{x:Static c:MainWindow.getNextImage}" Key="Right" />
+        <KeyBinding Command="{x:Static c:MainWindow.getPrevImage}" Key="Left" />
+    </Window.InputBindings>
+    <Grid>
+        <Menu HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <MenuItem Header="ファイル" Name="FileMenu">
+                <MenuItem Header="開く" Command="Open"/>
+                <Separator />
+                <MenuItem Header="終了" Command="Close"/>
+            </MenuItem>
+            <MenuItem Header="編集" Name="EditMenu">
+                <MenuItem Header="切り取り" Command="Cut"/>
+                <MenuItem Header="コピー" Command="Copy"/>
+                <MenuItem Header="貼り付け" Command="Paste"/>
+            </MenuItem>
+            <MenuItem Header="表示" Name="ViewMenu">
+                <MenuItem Header="全画面表示" Command="{x:Static c:MainWindow.ViewFullScreen}"/>
+                <Separator />
+                <MenuItem Header="右に90°回転" Command="{x:Static c:MainWindow.RotateRight}"/>
+                <MenuItem Header="左に90°回転" Command="{x:Static c:MainWindow.RotateLeft}"/>
+                <Separator />
+                <MenuItem Header="拡大" Command="{x:Static c:MainWindow.Zoom}"/>
+                <MenuItem Header="縮小" Command="{x:Static c:MainWindow.Reduction}"/>
+                <MenuItem Header="画面に合わせる" Command="{x:Static c:MainWindow.FitWindow}"/>
+                <MenuItem Header="幅に合わせる" Command="{x:Static c:MainWindow.FitWidth}"/>
+            </MenuItem>
+            <MenuItem Header="ヘルプ" Name="HelpMenu">
+                <MenuItem Header="ヘルプ"/>
+                <Separator />
+                <MenuItem Header="バージョン情報" Command="{x:Static c:MainWindow.ShowVersion}"/>
+            </MenuItem>
+        </Menu>
+        <Image Name="pictureview1" Stretch="Uniform" HorizontalAlignment="Center" Height="auto" Margin="0,27,0,0" VerticalAlignment="Center" Width="auto"/>
+    </Grid>
+</Window>
