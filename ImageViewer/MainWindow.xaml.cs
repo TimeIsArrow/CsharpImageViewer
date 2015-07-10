@@ -83,10 +83,11 @@ namespace ImageViewer
                 {
                     controller = new ImageController(openFileDialog.FileNames);
                     imageHandle = controller.Init();
-                    pictureview1.Source = imageHandle;      
+                    pictureview1.Source = imageHandle;
+                    Debug.WriteLine("Open -> CurrentNum:" + controller.currentImageNum);
                 }
 
-                Debug.WriteLine("Open -> CurrentNum:" + controller.currentImageNum);
+               
             }
             catch(Exception ex)
             {
