@@ -182,8 +182,7 @@ namespace ImageViewer
             rotate.Angle = rotate.Angle + 90;
             tb.Transform = rotate;
             tb.EndInit();
-            pictureview1.Source = tb;
-            
+            pictureview1.Source = tb;            
             Debug.WriteLine(rotate.Angle);
         }
 
@@ -201,6 +200,11 @@ namespace ImageViewer
             tb.Transform = rotate;
             tb.EndInit();
             pictureview1.Source = tb;
+            //フリーズ可能な場合にはフリーズする。
+            if (tb.CanFreeze)
+            {
+                tb.Freeze();
+            }
 
             Debug.WriteLine(rotate.Angle);
         }
@@ -248,6 +252,7 @@ namespace ImageViewer
             rotate.Angle = 0;
             imageHandle = controller.getNextImage();
             pictureview1.Source = imageHandle;
+            
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
         }
 

@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;      //OpenFileDialog
+using System.Diagnostics;   //Debug
 
 
 
@@ -19,6 +20,12 @@ namespace ImageViewer
         private List<String> fileList;     // ファイル名のリスト
         private static int currentNum;     //現在選択されているファイルの番号
         private static int filecount;      //ファイルの数
+
+        private TransformedBitmap transform;
+        private static BitmapImage image;
+        private static int rotatedeg;
+        private static double imageScaleX;
+        private static double imageScaleY;
 
 
         /// <summary>
@@ -44,6 +51,8 @@ namespace ImageViewer
         public ImageController(string[] filelist)
         {
             fileList = new List<string>();
+            transform = new TransformedBitmap();
+
             // メンバの初期化
             currentNum = 0;
             filecount = 0;
@@ -57,9 +66,13 @@ namespace ImageViewer
         }
 
         public BitmapImage Init() {
-            BitmapImage bi = new BitmapImage();
-            bi = getImage();
-            return bi;
+            String filename = fileList[currentImageNum];
+            FileStream fs;
+
+            fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            
+            image = getImage();
+            return image;
         }
 
         /// <summary>
@@ -68,7 +81,6 @@ namespace ImageViewer
         /// <returns></returns>
         public BitmapImage getNextImage()
         {
-            BitmapImage bi = new BitmapImage();
             if (currentNum < filecount - 1)
             {
                 currentNum++;
@@ -77,8 +89,8 @@ namespace ImageViewer
             {
                 currentNum = 0;
             }
-            bi = getImage();
-            return bi;
+            image = getImage();
+            return image;
         }
 
         /// <summary>
@@ -87,7 +99,6 @@ namespace ImageViewer
         /// <returns></returns>
         public BitmapImage getPrevImage()
         {
-            BitmapImage bi = new BitmapImage();
             if (currentNum > 0)
             {
                 currentNum--;
@@ -96,8 +107,8 @@ namespace ImageViewer
             {
                 currentNum = filecount - 1;
             }
-            bi = getImage();
-            return bi;
+            image = getImage();
+            return image;
         }
 
         /// <summary>
@@ -106,18 +117,19 @@ namespace ImageViewer
         /// <returns></returns>
         private BitmapImage getImage()
         {
-            BitmapImage bi = new BitmapImage();
-            FileStream fs;
-
+            image = new BitmapImage();
             try
             {
                 String filename = fileList[currentImageNum];
-                fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
-                bi.BeginInit();
-                bi.CacheOption = BitmapCacheOption.OnLoad;
-                bi.StreamSource = fs;
-                bi.EndInit();
-                fs.Close();
+
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.None;
+                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                image.UriSource = new Uri(fileList[currentNum], UriKind.RelativeOrAbsolute);
+                image.EndInit();
+
+                Debug.WriteLine(image.UriSource);
+                Debug.WriteLine(fileList[currentImageNum]);
             }
             catch (Exception ex)
             {
@@ -125,9 +137,9 @@ namespace ImageViewer
             }
             finally
             {
-                
+
             }
-            return bi;
+            return image;
         }
 
         public TransformedBitmap rotateImage()
