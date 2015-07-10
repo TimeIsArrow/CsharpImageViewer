@@ -17,12 +17,15 @@ namespace ImageViewer
 {
     class ImageController
     {
-        private List<String> fileList;     // ファイル名のリスト
-        private static int currentNum;     //現在選択されているファイルの番号
-        private static int filecount;      //ファイルの数
+        private List<String> fileList;          // ファイル名のリスト
+        private static int currentNum;          // 現在選択されているファイルの番号
+        private static int filecount;           // ファイルの数
 
-        private TransformedBitmap transform;
-        private static BitmapImage image;
+        private TransformGroup transgroup;      // 画面の拡大・縮小・回転のためのTransformクラスのグループ
+        private BitmapImage image;              // 画像表示のためのBitmapImage
+        private TransformedBitmap transimg;     // Transformした画像を格納するためのTransformedBitmap
+        private RotateTransform rotate;
+        private ScaleTransform scale;
         private static int rotatedeg;
         private static double imageScaleX;
         private static double imageScaleY;
@@ -51,7 +54,11 @@ namespace ImageViewer
         public ImageController(string[] filelist)
         {
             fileList = new List<string>();
-            transform = new TransformedBitmap();
+            transgroup = new TransformGroup();
+            rotate = new RotateTransform();
+            scale = new ScaleTransform();
+            transgroup.Children.Add(rotate);
+            transgroup.Children.Add(scale);
 
             // メンバの初期化
             currentNum = 0;
@@ -123,10 +130,13 @@ namespace ImageViewer
                 String filename = fileList[currentImageNum];
 
                 image.BeginInit();
-                image.CacheOption = BitmapCacheOption.None;
-                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.CreateOptions = BitmapCreateOptions.None;
                 image.UriSource = new Uri(fileList[currentNum], UriKind.RelativeOrAbsolute);
                 image.EndInit();
+                image.Freeze();
+
+                
 
                 Debug.WriteLine(image.UriSource);
                 Debug.WriteLine(fileList[currentImageNum]);
@@ -142,10 +152,53 @@ namespace ImageViewer
             return image;
         }
 
-        public TransformedBitmap rotateImage()
+        /// <summary>
+        /// 画像を回転させる
+        /// </summary>
+        /// <returns></returns>
+        public TransformedBitmap rotateImage(bool isLeft)
         {
-            TransformedBitmap tb = new TransformedBitmap();
-            return tb;
+            transimg = new TransformedBitmap();
+            transimg.BeginInit();
+            
+            if (isLeft)
+            {
+                rotate.Angle -= 90;
+            }
+            rotate.Angle += 90;
+
+            if (rotate.Angle == 360 || rotate.Angle == -360)
+            {
+                rotate.Angle = 0;
+            }
+
+            transimg.Source = image;
+            transimg.Transform = transgroup;
+            transimg.EndInit();
+            Debug.WriteLine("rotate"+ rotate.Angle);
+            return transimg;
+        }
+
+        /// <summary>
+        /// 画像を拡大する
+        /// </summary>
+        /// <param name="scaleX"></param>
+        /// <param name="scaleY"></param>
+        /// <returns></returns>
+        public TransformedBitmap scaleImage(double scaleX, double scaleY)
+        {
+            transimg = new TransformedBitmap();
+            transimg.BeginInit();
+
+            scale.ScaleX = scaleX;
+            scale.ScaleY = scaleY;
+
+            transimg.Source = image;
+            transimg.Transform = transgroup;
+            transimg.EndInit();
+            Debug.WriteLine("x:" + scale.ScaleX);
+            Debug.WriteLine("y:" + scale.ScaleY);
+            return transimg;
         }
     }
 }
