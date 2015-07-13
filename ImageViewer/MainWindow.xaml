@@ -72,6 +72,7 @@
                 <MenuItem Header="バージョン情報" Command="{x:Static c:MainWindow.ShowVersion}"/>
             </MenuItem>
         </Menu>
-        <Image Name="pictureview1" Stretch="Uniform" HorizontalAlignment="Center" Height="auto" Margin="0,27,0,0" VerticalAlignment="Center" Width="auto"/>
+         <Image Name="pictureview1" Stretch="Uniform" HorizontalAlignment="Center" Height="auto" Margin="0,27,0,0" VerticalAlignment="Center" Width="auto"/> 
+        <!--< Name="pictureview1" Stretch="Uniform" />-->
     </Grid>
 </Window>

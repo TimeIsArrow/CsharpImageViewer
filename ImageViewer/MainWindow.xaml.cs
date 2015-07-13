@@ -83,7 +83,7 @@ namespace ImageViewer
                 {
                     controller = new ImageController(openFileDialog.FileNames);
                     imageHandle = controller.Init();
-                    pictureview1.Source = imageHandle;
+                    pictureview1.Source = imageHandle;      
                     Debug.WriteLine("Open -> CurrentNum:" + controller.currentImageNum);
                 }
 
@@ -156,6 +156,12 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void ZoomCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            ScaleTransform scale = new ScaleTransform();
+            scale.ScaleX += 2.0;
+            scale.ScaleY += 2.0;
+            pictureview1.RenderTransform = scale;
+            Debug.WriteLine("scale x:" + scale.ScaleX);
+            Debug.WriteLine("scale y:" + scale.ScaleY);
             
         }
 
@@ -176,16 +182,7 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void RotateRightCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
-            TransformedBitmap tb = new TransformedBitmap();
-            tb.BeginInit();
-            tb.Source = imageHandle;
-            rotate.Angle = rotate.Angle + 90;
-            tb.Transform = rotate;
-            tb.EndInit();
-            pictureview1.Source = tb;
-            
-            Debug.WriteLine(rotate.Angle);
+            pictureview1.Source = controller.rotateImage(false);
         }
 
         /// <summary>
@@ -195,15 +192,7 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void RotateLeftCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            TransformedBitmap tb = new TransformedBitmap();
-            tb.BeginInit();
-            tb.Source = imageHandle;
-            rotate.Angle = rotate.Angle - 90;
-            tb.Transform = rotate;
-            tb.EndInit();
-            pictureview1.Source = tb;
-
-            Debug.WriteLine(rotate.Angle);
+            pictureview1.Source = controller.rotateImage(true);
         }
 
         /// <summary>
@@ -223,10 +212,10 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void FitWidthCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            imageHandle.DecodePixelWidth = imageHandle.PixelWidth * 4;
-            imageHandle.DecodePixelHeight = imageHandle.PixelHeight * 4;
-            pictureview1.Source = imageHandle;
-            
+            double x = 1.5;
+            double y = 1.5;
+            pictureview1.Source = controller.scaleImage(x,y);
+            Debug.WriteLine("FitWidth");
         }
 
         /// <summary>
@@ -246,9 +235,7 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void getNextImageCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            rotate.Angle = 0;
-            imageHandle = controller.getNextImage();
-            pictureview1.Source = imageHandle;
+            pictureview1.Source = controller.getNextImage();            
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
         }
 
@@ -259,9 +246,7 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void getPrevImageCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            rotate.Angle = 0;
-            imageHandle = controller.getPrevImage();
-            pictureview1.Source = imageHandle;
+            pictureview1.Source = controller.getPrevImage();
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
         }
     }
