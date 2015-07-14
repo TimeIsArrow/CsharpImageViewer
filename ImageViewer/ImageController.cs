@@ -20,15 +20,14 @@ namespace ImageViewer
         private List<String> fileList;          // ファイル名のリスト
         private static int currentNum;          // 現在選択されているファイルの番号
         private static int filecount;           // ファイルの数
+        private static double scalex;
+        private static double scaley;
 
         private TransformGroup transgroup;      // 画面の拡大・縮小・回転のためのTransformクラスのグループ
         private BitmapImage image;              // 画像表示のためのBitmapImage
         private TransformedBitmap transimg;     // Transformした画像を格納するためのTransformedBitmap
         private RotateTransform rotate;
         private ScaleTransform scale;
-        private static int rotatedeg;
-        private static double imageScaleX;
-        private static double imageScaleY;
 
 
         /// <summary>
@@ -47,6 +46,16 @@ namespace ImageViewer
             get { return filecount; }
         }
 
+        // 現在の画像の倍率
+        public double imageScaleX
+        {
+            get { return scale.ScaleX; }
+        }
+        public double imageScaleY
+        {
+            get { return scale.ScaleY; }
+        }
+
         /// <summary>
         /// コンストラクター
         /// </summary>
@@ -63,6 +72,8 @@ namespace ImageViewer
             // メンバの初期化
             currentNum = 0;
             filecount = 0;
+            scalex = 0;
+            scaley = 0;
 
             foreach (string filename in filelist)
             {
@@ -187,15 +198,31 @@ namespace ImageViewer
         /// <returns></returns>
         public TransformedBitmap scaleImage(double scaleX, double scaleY)
         {
-            transimg = new TransformedBitmap();
-            transimg.BeginInit();
-
-            scale.ScaleX = scaleX;
-            scale.ScaleY = scaleY;
-
-            transimg.Source = image;
+            transimg = null;
+            if (transimg == null) { 
+                transimg = new TransformedBitmap();
+                transimg.BeginInit();
+                transimg.Source = image;
+                transimg.EndInit();
+            }
+            //transimg.BeginInit();
+            if (scalex >= 0)
+            {
+                scalex += scaleX;
+                scaley += scaleY;
+            }
+            else
+            {
+                scalex = 1.0;
+                scaley = 1.0;
+            }
+            scale.ScaleX = scalex;
+            scale.ScaleY = scaley;
+            //transimg.Source = image;
+           
             transimg.Transform = transgroup;
-            transimg.EndInit();
+            //transimg.EndInit();
+            
             Debug.WriteLine("x:" + scale.ScaleX);
             Debug.WriteLine("y:" + scale.ScaleY);
             return transimg;
