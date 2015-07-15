@@ -33,6 +33,8 @@ namespace ImageViewer
         BitmapImage imageHandle = new BitmapImage();
         // TransFromグループ
         TransformGroup trans = new TransformGroup();
+        // フルスクリーン状態
+        bool isFullScreen;
 
 
         /// <summary>
@@ -72,14 +74,24 @@ namespace ImageViewer
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OpenFileCmd_Executed(object sender, ExecutedRoutedEventArgs e)
-        {            
+        {
+            // ファイルダイアログの設定
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Multiselect = true;
             openFileDialog.FilterIndex = 1;
             openFileDialog.Filter = Properties.Settings.Default.FileFilter;
+
+            // 画像変形のためのTransFormGroupに拡大・回転のTransformクラスを追加
             trans.Children.Add(new ScaleTransform());
             trans.Children.Add(new RotateTransform());
-            pictureview1.RenderTransform = trans;
+
+            // 画像表示用のpictureview1にTransFormGroupを設定
+            pictureview1.LayoutTransform = trans;
+
+            // フルスクリーンフラグの設定
+            isFullScreen = false;
+
+            // ファイルダイアログの表示
             try
             {
                 bool? result = openFileDialog.ShowDialog();
@@ -88,12 +100,7 @@ namespace ImageViewer
                     controller = new ImageController(openFileDialog.FileNames);
                     imageHandle = controller.Init();
                     pictureview1.Source = imageHandle;      
-                    Debug.WriteLine("Open -> CurrentNum:" + controller.currentImageNum);
                 }
-
-                Debug.WriteLine("Open -> CurrentNum:" + controller.currentImageNum);
-                Debug.WriteLine("Open -> pictureview1 width: " + pictureview1.ActualWidth);
-                Debug.WriteLine("Open -> pictureview1 height: " + pictureview1.ActualHeight);
             }
             catch(Exception ex)
             {
@@ -152,7 +159,19 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void ViewFullScreenCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            isFullScreen = !isFullScreen;
+            if (isFullScreen == true)
+            {
+                this.WindowStyle = WindowStyle.None;
+                this.WindowState = WindowState.Maximized;
+                this.Topmost = true;
+            }
+            else
+            {
+                this.WindowStyle = WindowStyle.SingleBorderWindow;
+                this.WindowState = WindowState.Normal;
+                this.Topmost = false;
+            }
         }
 
         /// <summary>
@@ -163,14 +182,10 @@ namespace ImageViewer
         private void ZoomCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             ScaleTransform scale = (ScaleTransform)trans.Children[0];
-            scale.ScaleX += 0.5;
-            scale.ScaleY += 0.5;
-            scale.CenterX = pictureview1.Source.Width / 2;
-            scale.CenterY = pictureview1.Source.Height / 2;
-            pictureview1.Width = pictureview1.Source.Width;
-            pictureview1.Height = pictureview1.Source.Height;
-                        
-            //pictureview1.Source = controller.scaleImage(0.5, 0.5);
+            scale.ScaleX += 0.1;
+            scale.ScaleY += 0.1;
+            scale.CenterX = pictureview1.ActualWidth / 2;
+            scale.CenterY = pictureview1.ActualHeight / 2;                        
         }
 
         /// <summary>
@@ -181,21 +196,22 @@ namespace ImageViewer
         private void ReductionCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             ScaleTransform scale = (ScaleTransform)trans.Children[0];
-            if (scale.ScaleX > 0) 
+            if (scale.ScaleX == 0.1) 
             {  
-                scale.ScaleX -= 0.5;
-                scale.ScaleY -= 0.5;
+                scale.ScaleX = 0.1;
+                scale.ScaleY = 0.1;
             }
-            scale.CenterX = pictureview1.Source.Width / 2;
-            scale.CenterY = pictureview1.Source.Height / 2;
-            pictureview1.Width = pictureview1.Source.Width;
-            pictureview1.Height = pictureview1.Source.Height;
-            Debug.WriteLine("pictureview1 width: " + pictureview1.ActualWidth);
-            Debug.WriteLine("pictureview1 height: " + pictureview1.ActualHeight);
-            Debug.WriteLine("pictureview1 source width: " + pictureview1.Source.Width);
-            Debug.WriteLine("pictureview1 source height: " + pictureview1.Source.Height);
+            else if(scale.ScaleX > 0.2)
+            {
+                scale.ScaleX -= 0.1;
+                scale.ScaleY -= 0.1;
+                
+            }
 
-            //pictureview1.Source = controller.scaleImage(-0.5, -0.5);
+            scale.CenterX = pictureview1.ActualWidth / 2;
+            scale.CenterY = pictureview1.ActualHeight / 2;
+            Debug.WriteLine("Scale X: " + scale.ScaleX);
+            Debug.WriteLine("Scale Y: " + scale.ScaleY);
         }
 
         /// <summary>
@@ -205,7 +221,12 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void RotateRightCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            pictureview1.Source = controller.rotateImage(false);
+            RotateTransform rotate = (RotateTransform)trans.Children[1];
+            rotate.Angle += 90;
+            if (rotate.Angle == 360)
+            {
+                rotate.Angle = 0;
+            }
         }
 
         /// <summary>
@@ -215,7 +236,12 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void RotateLeftCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            pictureview1.Source = controller.rotateImage(true);
+            RotateTransform rotate = (RotateTransform)trans.Children[1];
+            rotate.Angle -= 90;
+            if (rotate.Angle == -360)
+            {
+                rotate.Angle = 0;
+            }
         }
 
         /// <summary>
@@ -225,7 +251,13 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void FitWindowCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            ScaleTransform scale = (ScaleTransform)trans.Children[0];
 
+            double x = this.ActualHeight / pictureview1.Source.Height;
+            double y = this.ActualHeight / pictureview1.Source.Height;
+
+            scale.ScaleX = x;
+            scale.ScaleY = y;
         }
 
         /// <summary>
@@ -235,9 +267,13 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void FitWidthCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            ScaleTransform scale = (ScaleTransform)trans.Children[0];
+            
             double x = this.ActualWidth / pictureview1.Source.Width;
             double y = this.ActualWidth / pictureview1.Source.Width;
-            pictureview1.Source = controller.scaleImage(x, y);
+
+            scale.ScaleX = x;
+            scale.ScaleY = y;
             
             Debug.WriteLine("FitWidth");
         }

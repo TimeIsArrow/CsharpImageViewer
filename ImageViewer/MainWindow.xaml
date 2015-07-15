@@ -38,12 +38,25 @@
         <CommandBinding Command="{x:Static c:MainWindow.ShowVersion}" Executed="ShowVersionCmd_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
-        <KeyBinding Command="{x:Static c:MainWindow.getNextImage}" Key="Right" />
-        <KeyBinding Command="{x:Static c:MainWindow.getPrevImage}" Key="Left" />
+        <!-- 次の画像を表示コマンド -->
+        <KeyBinding Command="{x:Static c:MainWindow.getNextImage}" Key="Space" />
+        <!-- 前の画像を表示コマンド -->
+        <KeyBinding Command="{x:Static c:MainWindow.getPrevImage}" Modifiers="Shift" Key="Space" />
+        <!-- [表示]-[右に90°回転]用コマンド -->
         <KeyBinding Command="{x:Static c:MainWindow.RotateRight}" Key="R"/>
+        <!-- [表示]-[左に90°回転]用コマンド -->
         <KeyBinding Command="{x:Static c:MainWindow.RotateLeft}" Modifiers="Shift"  Key="R"/>
+        <!-- [表示]-[拡大]用コマンド -->
         <KeyBinding Command="{x:Static c:MainWindow.Zoom}" Key="Z"/>
+        <!-- [表示]-[縮小]用コマンド -->
         <KeyBinding Command="{x:Static c:MainWindow.Reduction}" Modifiers="Shift" Key="Z" />
+        <!-- [表示]-[全画面表示]用コマンド -->
+        <KeyBinding Command="{x:Static c:MainWindow.ViewFullScreen}" Key="F" />
+        <!-- [表示]-[画面に合わせる]用コマンド -->
+        <KeyBinding Command="{x:Static c:MainWindow.FitWindow}" Key="W" />
+        <!-- [表示]-[幅に合わせる]用コマンド -->
+        <KeyBinding Command="{x:Static c:MainWindow.FitWidth}" Modifiers="Shift" Key="W" />
+        
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -64,6 +77,9 @@
             <MenuItem Header="表示" Name="ViewMenu">
                 <MenuItem Header="全画面表示" Command="{x:Static c:MainWindow.ViewFullScreen}"/>
                 <Separator />
+                <MenuItem Header="次の画像" Command="{x:Static c:MainWindow.getNextImage}"/>
+                <MenuItem Header="前の画像" Command="{x:Static c:MainWindow.getPrevImage}"/>
+                <Separator />
                 <MenuItem Header="右に90°回転" Command="{x:Static c:MainWindow.RotateRight}"/>
                 <MenuItem Header="左に90°回転" Command="{x:Static c:MainWindow.RotateLeft}"/>
                 <Separator />
@@ -78,8 +94,8 @@
                 <MenuItem Header="バージョン情報" Command="{x:Static c:MainWindow.ShowVersion}"/>
             </MenuItem>
         </Menu>
-        <ScrollViewer Grid.Row="1">
-            <Image Name="pictureview1" Stretch="UniformToFill" Margin="0,27,0,0"/>
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Image Name="pictureview1" Stretch="None" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </ScrollViewer>
     </Grid>
 </Window>
