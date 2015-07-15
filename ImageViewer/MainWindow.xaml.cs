@@ -88,6 +88,7 @@ namespace ImageViewer
                     controller = new ImageController(openFileDialog.FileNames);
                     imageHandle = controller.Init();
                     pictureview1.Source = imageHandle;      
+                    Debug.WriteLine("Open -> CurrentNum:" + controller.currentImageNum);
                 }
 
                 Debug.WriteLine("Open -> CurrentNum:" + controller.currentImageNum);
@@ -161,17 +162,15 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void ZoomCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //ScaleTransform scale = (ScaleTransform)trans.Children[0];
-            //scale.ScaleX += 0.5;
-            //scale.ScaleY += 0.5;
-            //scale.CenterX = pictureview1.Source.Width / 2;
-            //scale.CenterY = pictureview1.Source.Height / 2;
-            //pictureview1.Width = pictureview1.Source.Width;
-            //pictureview1.Height = pictureview1.Source.Height;
-            //Debug.WriteLine("pictureview1 width: " + pictureview1.ActualWidth);
-            //Debug.WriteLine("pictureview1 height: " + pictureview1.ActualHeight);
-            pictureview1.Source = controller.scaleImage(0.5, 0.5);
-                        
+            ScaleTransform scale = (ScaleTransform)trans.Children[0];
+            scale.ScaleX += 0.5;
+            scale.ScaleY += 0.5;
+            scale.CenterX = pictureview1.Source.Width / 2;
+            scale.CenterY = pictureview1.Source.Height / 2;
+            pictureview1.Width = pictureview1.Source.Width;
+            pictureview1.Height = pictureview1.Source.Height;
+            
+            //pictureview1.Source = controller.scaleImage(0.5, 0.5);
         }
 
         /// <summary>
@@ -181,16 +180,22 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void ReductionCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //ScaleTransform scale = (ScaleTransform)trans.Children[0];
-            //scale.ScaleX -= 0.5;
-            //scale.ScaleY -= 0.5;
-            //scale.CenterX = pictureview1.Source.Width / 2;
-            //scale.CenterY = pictureview1.Source.Height / 2;
-            //pictureview1.Width = pictureview1.Source.Width;
-            //pictureview1.Height = pictureview1.Source.Height;
-            //Debug.WriteLine("pictureview1 width: " + pictureview1.ActualWidth);
-            //Debug.WriteLine("pictureview1 height: " + pictureview1.ActualHeight);
-            pictureview1.Source = controller.scaleImage(-0.5, -0.5);
+            ScaleTransform scale = (ScaleTransform)trans.Children[0];
+            if (scale.ScaleX > 0) 
+            {  
+                scale.ScaleX -= 0.5;
+                scale.ScaleY -= 0.5;
+            }
+            scale.CenterX = pictureview1.Source.Width / 2;
+            scale.CenterY = pictureview1.Source.Height / 2;
+            pictureview1.Width = pictureview1.Source.Width;
+            pictureview1.Height = pictureview1.Source.Height;
+            Debug.WriteLine("pictureview1 width: " + pictureview1.ActualWidth);
+            Debug.WriteLine("pictureview1 height: " + pictureview1.ActualHeight);
+            Debug.WriteLine("pictureview1 source width: " + pictureview1.Source.Width);
+            Debug.WriteLine("pictureview1 source height: " + pictureview1.Source.Height);
+
+            //pictureview1.Source = controller.scaleImage(-0.5, -0.5);
         }
 
         /// <summary>

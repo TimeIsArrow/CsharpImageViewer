@@ -78,8 +78,8 @@
                 <MenuItem Header="バージョン情報" Command="{x:Static c:MainWindow.ShowVersion}"/>
             </MenuItem>
         </Menu>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Width="auto" Height="auto">
-            <Image Name="pictureview1" Stretch="None" Margin="0,27,0,0"/>
+        <ScrollViewer Grid.Row="1">
+            <Image Name="pictureview1" Stretch="UniformToFill" Margin="0,27,0,0"/>
         </ScrollViewer>
     </Grid>
 </Window>

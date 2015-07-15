@@ -147,10 +147,9 @@ namespace ImageViewer
                 image.EndInit();
                 image.Freeze();
 
-                
-
                 Debug.WriteLine(image.UriSource);
                 Debug.WriteLine(fileList[currentImageNum]);
+                Debug.WriteLine("pixel width before:" + image.PixelWidth);
             }
             catch (Exception ex)
             {
@@ -176,7 +175,10 @@ namespace ImageViewer
             {
                 rotate.Angle -= 90;
             }
+            else
+            {
             rotate.Angle += 90;
+            }
 
             if (rotate.Angle == 360 || rotate.Angle == -360)
             {
@@ -200,8 +202,8 @@ namespace ImageViewer
         {
             transimg = null;
             if (transimg == null) { 
-                transimg = new TransformedBitmap();
-                transimg.BeginInit();
+            transimg = new TransformedBitmap();
+            transimg.BeginInit();
                 transimg.Source = image;
                 transimg.EndInit();
             }
@@ -219,12 +221,13 @@ namespace ImageViewer
             scale.ScaleX = scalex;
             scale.ScaleY = scaley;
             //transimg.Source = image;
-           
+
             transimg.Transform = transgroup;
             //transimg.EndInit();
             
             Debug.WriteLine("x:" + scale.ScaleX);
             Debug.WriteLine("y:" + scale.ScaleY);
+            Debug.WriteLine("pixel width after:" + transimg.PixelWidth);
             return transimg;
         }
     }
