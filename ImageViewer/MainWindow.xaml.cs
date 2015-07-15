@@ -99,7 +99,11 @@ namespace ImageViewer
                 {
                     controller = new ImageController(openFileDialog.FileNames);
                     imageHandle = controller.Init();
-                    pictureview1.Source = imageHandle;      
+                    pictureview1.Source = imageHandle;
+                    ScaleTransform scale = (ScaleTransform)trans.Children[0];
+                    
+                    Debug.WriteLine("scale x: " + scale.ScaleX);
+                    Debug.WriteLine("scale y: " + scale.ScaleY);
                 }
             }
             catch(Exception ex)
@@ -253,11 +257,16 @@ namespace ImageViewer
         {
             ScaleTransform scale = (ScaleTransform)trans.Children[0];
 
-            double x = this.ActualHeight / pictureview1.Source.Height;
-            double y = this.ActualHeight / pictureview1.Source.Height;
-
-            scale.ScaleX = x;
-            scale.ScaleY = y;
+            if (imageHandle.PixelWidth > imageHandle.PixelHeight)
+            {
+                scale.ScaleX = this.ActualWidth / imageHandle.Width;
+                scale.ScaleY = this.ActualWidth / imageHandle.Width;
+            }
+            else
+            {
+                scale.ScaleX = this.ActualHeight / imageHandle.Height;
+                scale.ScaleY = this.ActualHeight / imageHandle.Height;
+            }
         }
 
         /// <summary>
