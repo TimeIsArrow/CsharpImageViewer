@@ -169,7 +169,7 @@ namespace ImageViewer
             scale.CenterY = pictureview1.Source.Height / 2;
             pictureview1.Width = pictureview1.Source.Width;
             pictureview1.Height = pictureview1.Source.Height;
-            
+                        
             //pictureview1.Source = controller.scaleImage(0.5, 0.5);
         }
 
