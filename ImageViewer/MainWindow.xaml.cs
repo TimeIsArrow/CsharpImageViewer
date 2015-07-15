@@ -304,7 +304,8 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void getNextImageCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            pictureview1.Source = controller.getNextImage();            
+            imageHandle = controller.getNextImage();
+            pictureview1.Source = imageHandle;            
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
         }
 
@@ -315,7 +316,8 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void getPrevImageCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            pictureview1.Source = controller.getPrevImage();
+            imageHandle = controller.getPrevImage();
+            pictureview1.Source = imageHandle;
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
         }
     }
