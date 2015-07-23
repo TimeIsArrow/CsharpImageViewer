@@ -30,11 +30,18 @@ namespace ImageViewer
         // 画像読み込み用クラス
         ImageController controller;
         // 画像データ保存用BitmapImage
-        BitmapImage imageHandle = new BitmapImage();
+        BitmapImage imageHandle;
         // TransFromグループ
         TransformGroup trans = new TransformGroup();
+        
         // フルスクリーン状態
         bool isFullScreen;
+
+        // 現在の画像の幅
+        double imageWidth;
+
+        // 現在の画像の高さ
+        double imageHeight;
 
 
         /// <summary>
@@ -98,8 +105,11 @@ namespace ImageViewer
                 if (result == true)
                 {
                     controller = new ImageController(openFileDialog.FileNames);
+                    imageHandle = new BitmapImage();
                     imageHandle = controller.Init();
                     pictureview1.Source = imageHandle;
+                    imageHeight = imageHandle.Height;
+                    imageWidth = imageHandle.Width;
                     ScaleTransform scale = (ScaleTransform)trans.Children[0];
                     
                     Debug.WriteLine("scale x: " + scale.ScaleX);
@@ -227,6 +237,9 @@ namespace ImageViewer
         {
             RotateTransform rotate = (RotateTransform)trans.Children[1];
             rotate.Angle += 90;
+            double tmp = imageHeight;
+            imageHeight = imageWidth;
+            imageWidth = tmp;
             if (rotate.Angle == 360)
             {
                 rotate.Angle = 0;
@@ -242,6 +255,9 @@ namespace ImageViewer
         {
             RotateTransform rotate = (RotateTransform)trans.Children[1];
             rotate.Angle -= 90;
+            double tmp = imageHeight;
+            imageHeight = imageWidth;
+            imageWidth = tmp;
             if (rotate.Angle == -360)
             {
                 rotate.Angle = 0;
@@ -259,14 +275,17 @@ namespace ImageViewer
 
             if (imageHandle.PixelWidth > imageHandle.PixelHeight)
             {
-                scale.ScaleX = this.ActualWidth / imageHandle.Width;
-                scale.ScaleY = this.ActualWidth / imageHandle.Width;
+                scale.ScaleX = this.ActualWidth / imageWidth;
+                scale.ScaleY = this.ActualWidth / imageWidth;
             }
             else
             {
-                scale.ScaleX = this.ActualHeight / imageHandle.Height;
-                scale.ScaleY = this.ActualHeight / imageHandle.Height;
+                scale.ScaleX = this.ActualHeight / imageHeight;
+                scale.ScaleY = this.ActualHeight / imageHeight;
             }
+            Debug.WriteLine("image width: " + scrollviewer1.ActualWidth);
+            Debug.WriteLine("image height: " + scrollviewer1.ActualHeight);
+
         }
 
         /// <summary>
@@ -278,8 +297,8 @@ namespace ImageViewer
         {
             ScaleTransform scale = (ScaleTransform)trans.Children[0];
             
-            double x = this.ActualWidth / pictureview1.Source.Width;
-            double y = this.ActualWidth / pictureview1.Source.Width;
+            double x = this.ActualWidth / imageWidth;
+            double y = this.ActualWidth / imageWidth;
 
             scale.ScaleX = x;
             scale.ScaleY = y;
@@ -307,6 +326,8 @@ namespace ImageViewer
             imageHandle = controller.getNextImage();
             pictureview1.Source = imageHandle;            
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
+            imageHeight = imageHandle.Height;
+            imageWidth = imageHandle.Width;
         }
 
         /// <summary>
@@ -319,6 +340,27 @@ namespace ImageViewer
             imageHandle = controller.getPrevImage();
             pictureview1.Source = imageHandle;
             Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
+            imageHeight = imageHandle.Height;
+            imageWidth = imageHandle.Width;
         }
+
+        /// <summary>
+        /// 画像編集メニュー有効化前確認
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void imageControll_CanExecuted(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (imageHandle != null)
+            {
+                e.CanExecute = true;
+            }
+            else
+            {
+                e.CanExecute = false;
+            }
+        }
+
+
     }
 }

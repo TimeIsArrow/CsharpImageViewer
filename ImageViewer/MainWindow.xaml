@@ -9,31 +9,31 @@
         <!-- [ファイル]-[終了]用コマンド -->
         <CommandBinding Command="Close" Executed="AppCloseCmd_Executed"/>
         <!-- [編集]-[切り取り]用コマンド -->
-        <CommandBinding Command="Cut" Executed="CutCmd_Executed"/>
+        <CommandBinding Command="Cut" CanExecute="imageControll_CanExecuted" Executed="CutCmd_Executed"/>
         <!-- [編集]-[コピー]用コマンド -->
-        <CommandBinding Command="Copy" Executed="CopyCmd_Executed"/>
+        <CommandBinding Command="Copy" CanExecute="imageControll_CanExecuted" Executed="CopyCmd_Executed"/>
         <!-- [編集]-[貼り付け]用コマンド -->
-        <CommandBinding Command="Paste" Executed="PasteCmd_Executed"/>
-        
+        <CommandBinding Command="Paste" CanExecute="imageControll_CanExecuted" Executed="PasteCmd_Executed"/>
+
         <!-- [表示]-[全画面表示]用コマンド -->
         <CommandBinding Command="{x:Static c:MainWindow.ViewFullScreen}" Executed="ViewFullScreenCmd_Executed"/>
         <!-- [表示]-[右に90°回転]用コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.RotateRight}" Executed="RotateRightCmd_Executed"/>
+        <CommandBinding Command="{x:Static c:MainWindow.RotateRight}" CanExecute="imageControll_CanExecuted" Executed="RotateRightCmd_Executed"/>
         <!-- [表示]-[左に90°回転]用コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.RotateLeft}" Executed="RotateLeftCmd_Executed"/>
+        <CommandBinding Command="{x:Static c:MainWindow.RotateLeft}" CanExecute="imageControll_CanExecuted" Executed="RotateLeftCmd_Executed"/>
         <!-- [表示]-[拡大]用コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.Zoom}" Executed="ZoomCmd_Executed"/>
+        <CommandBinding Command="{x:Static c:MainWindow.Zoom}" CanExecute="imageControll_CanExecuted" Executed="ZoomCmd_Executed"/>
         <!-- [表示]-[縮小]用コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.Reduction}" Executed="ReductionCmd_Executed"/>
+        <CommandBinding Command="{x:Static c:MainWindow.Reduction}" CanExecute="imageControll_CanExecuted" Executed="ReductionCmd_Executed"/>
         <!-- [表示]-[画面に合わせる]用コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.FitWindow}" Executed="FitWindowCmd_Executed"/>
+        <CommandBinding Command="{x:Static c:MainWindow.FitWindow}" CanExecute="imageControll_CanExecuted" Executed="FitWindowCmd_Executed"/>
         <!-- [表示]-[幅に合わせる]用コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.FitWidth}" Executed="FitWidthCmd_Executed"/>
+        <CommandBinding Command="{x:Static c:MainWindow.FitWidth}" CanExecute="imageControll_CanExecuted" Executed="FitWidthCmd_Executed"/>
         <!-- 次の画像を表示コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.getNextImage}" Executed="getNextImageCmd_Executed"/>
+        <CommandBinding Command="{x:Static c:MainWindow.getNextImage}" CanExecute="imageControll_CanExecuted" Executed="getNextImageCmd_Executed"/>
         <!-- 前の画像を表示コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.getPrevImage}" Executed="getPrevImageCmd_Executed"/>
-        
+        <CommandBinding Command="{x:Static c:MainWindow.getPrevImage}" CanExecute="imageControll_CanExecuted" Executed="getPrevImageCmd_Executed"/>
+
         <!-- [ヘルプ]-[バージョン情報]用コマンド -->
         <CommandBinding Command="{x:Static c:MainWindow.ShowVersion}" Executed="ShowVersionCmd_Executed"/>
     </Window.CommandBindings>
@@ -56,14 +56,18 @@
         <KeyBinding Command="{x:Static c:MainWindow.FitWindow}" Key="W" />
         <!-- [表示]-[幅に合わせる]用コマンド -->
         <KeyBinding Command="{x:Static c:MainWindow.FitWidth}" Modifiers="Shift" Key="W" />
-        
+
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="23"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <MenuItem Header="ファイル" Name="FileMenu">
                 <MenuItem Header="開く" Command="Open"/>
                 <Separator />
@@ -94,8 +98,10 @@
                 <MenuItem Header="バージョン情報" Command="{x:Static c:MainWindow.ShowVersion}"/>
             </MenuItem>
         </Menu>
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Column="1" Name="scrollviewer1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Image Name="pictureview1" Stretch="None" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </ScrollViewer>
+        
+        <ListBox HorizontalAlignment="Left" Height="650" Grid.Column="0" Grid.Row="1" VerticalAlignment="Top" Width="118"/>
     </Grid>
 </Window>
