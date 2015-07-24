@@ -1,6 +1,7 @@
-﻿<Window x:Class="ImageViewer.MainWindow"
+﻿<Controls:MetroWindow x:Class="ImageViewer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:c="clr-namespace:ImageViewer"
         Title="画像ビューア" Height="396" Width="704">
     <Window.CommandBindings>
@@ -16,7 +17,7 @@
         <CommandBinding Command="Paste" CanExecute="imageControll_CanExecuted" Executed="PasteCmd_Executed"/>
 
         <!-- [表示]-[全画面表示]用コマンド -->
-        <CommandBinding Command="{x:Static c:MainWindow.ViewFullScreen}" Executed="ViewFullScreenCmd_Executed"/>
+        <CommandBinding Command="{x:Static c:MainWindow.showFullScreen}" Executed="showFullScreenCmd_Executed"/>
         <!-- [表示]-[右に90°回転]用コマンド -->
         <CommandBinding Command="{x:Static c:MainWindow.RotateRight}" CanExecute="imageControll_CanExecuted" Executed="RotateRightCmd_Executed"/>
         <!-- [表示]-[左に90°回転]用コマンド -->
@@ -34,6 +35,8 @@
         <!-- 前の画像を表示コマンド -->
         <CommandBinding Command="{x:Static c:MainWindow.getPrevImage}" CanExecute="imageControll_CanExecuted" Executed="getPrevImageCmd_Executed"/>
 
+        <!-- [ウィンドウ]-[ファイルリストの表示]用コマンド-->
+        <CommandBinding Command="{x:Static c:MainWindow.showFileList}" CanExecute="imageControll_CanExecuted" Executed="showFileListCmd_Executed"/>
         <!-- [ヘルプ]-[バージョン情報]用コマンド -->
         <CommandBinding Command="{x:Static c:MainWindow.ShowVersion}" Executed="ShowVersionCmd_Executed"/>
     </Window.CommandBindings>
@@ -51,20 +54,20 @@
         <!-- [表示]-[縮小]用コマンド -->
         <KeyBinding Command="{x:Static c:MainWindow.Reduction}" Modifiers="Shift" Key="Z" />
         <!-- [表示]-[全画面表示]用コマンド -->
-        <KeyBinding Command="{x:Static c:MainWindow.ViewFullScreen}" Key="F" />
+        <KeyBinding Command="{x:Static c:MainWindow.showFullScreen}" Key="F" />
         <!-- [表示]-[画面に合わせる]用コマンド -->
         <KeyBinding Command="{x:Static c:MainWindow.FitWindow}" Key="W" />
         <!-- [表示]-[幅に合わせる]用コマンド -->
         <KeyBinding Command="{x:Static c:MainWindow.FitWidth}" Modifiers="Shift" Key="W" />
 
     </Window.InputBindings>
-    <Grid>
+    <Grid Name="mainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="23"/>
+            <RowDefinition Height="0.1*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition Width="0"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Menu Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
@@ -79,8 +82,7 @@
                 <MenuItem Header="貼り付け" Command="Paste"/>
             </MenuItem>
             <MenuItem Header="表示" Name="ViewMenu">
-                <MenuItem Header="全画面表示" Command="{x:Static c:MainWindow.ViewFullScreen}"/>
-                <Separator />
+                
                 <MenuItem Header="次の画像" Command="{x:Static c:MainWindow.getNextImage}"/>
                 <MenuItem Header="前の画像" Command="{x:Static c:MainWindow.getPrevImage}"/>
                 <Separator />
@@ -92,6 +94,11 @@
                 <MenuItem Header="画面に合わせる" Command="{x:Static c:MainWindow.FitWindow}"/>
                 <MenuItem Header="幅に合わせる" Command="{x:Static c:MainWindow.FitWidth}"/>
             </MenuItem>
+            <MenuItem Header="ウィンドウ" Name="WindowMenu">
+                <MenuItem Header="全画面表示" Command="{x:Static c:MainWindow.showFullScreen}"/>
+                <Separator />
+                <MenuItem Name="showFileListMenu" Header="ファイルリストの表示" IsCheckable="True" Command="{x:Static c:MainWindow.showFileList}"/>
+            </MenuItem>
             <MenuItem Header="ヘルプ" Name="HelpMenu">
                 <MenuItem Header="ヘルプ"/>
                 <Separator />
@@ -101,7 +108,8 @@
         <ScrollViewer Grid.Column="1" Name="scrollviewer1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Image Name="pictureview1" Stretch="None" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </ScrollViewer>
-        
-        <ListBox HorizontalAlignment="Left" Height="650" Grid.Column="0" Grid.Row="1" VerticalAlignment="Top" Width="118"/>
+        <ListBox  Name="fileListBox" Grid.Column="0" Grid.Row="1" SelectionChanged="selectShowFileList_SelectionChanged"
+                  HorizontalAlignment="Left" Height="Auto" VerticalAlignment="Top" Width="Auto" BorderBrush="Transparent">
+        </ListBox>
     </Grid>
-</Window>
+</Controls:MetroWindow>

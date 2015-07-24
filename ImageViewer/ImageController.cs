@@ -56,6 +56,12 @@ namespace ImageViewer
             get { return scale.ScaleY; }
         }
 
+        // ファイル名のリスト
+        public List<string> FileList
+        {
+            get { return fileList; }
+        }
+
         /// <summary>
         /// コンストラクター
         /// </summary>
@@ -89,7 +95,7 @@ namespace ImageViewer
 
             fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
             
-            image = getImage();
+            image = getImage(currentNum);
             return image;
         }
 
@@ -107,7 +113,7 @@ namespace ImageViewer
             {
                 currentNum = 0;
             }
-            image = getImage();
+            image = getImage(currentNum);
             return image;
         }
 
@@ -125,7 +131,13 @@ namespace ImageViewer
             {
                 currentNum = filecount - 1;
             }
-            image = getImage();
+            image = getImage(currentNum);
+            return image;
+        }
+
+        public BitmapImage getSelectedImage(int num) 
+        {
+            image = getImage(num);
             return image;
         }
 
@@ -133,22 +145,22 @@ namespace ImageViewer
         /// ファイル名から画像ファイルを取得
         /// </summary>
         /// <returns></returns>
-        private BitmapImage getImage()
+        private BitmapImage getImage(int num)
         {
             image = new BitmapImage();
             try
             {
-                String filename = fileList[currentImageNum];
+                String filename = fileList[num];
 
                 image.BeginInit();
                 image.CacheOption = BitmapCacheOption.OnLoad;
                 image.CreateOptions = BitmapCreateOptions.None;
-                image.UriSource = new Uri(fileList[currentNum], UriKind.RelativeOrAbsolute);
+                image.UriSource = new Uri(fileList[num], UriKind.RelativeOrAbsolute);
                 image.EndInit();
                 image.Freeze();
 
                 Debug.WriteLine(image.UriSource);
-                Debug.WriteLine(fileList[currentImageNum]);
+                Debug.WriteLine(fileList[num]);
                 Debug.WriteLine("pixel width before:" + image.PixelWidth);
             }
             catch (Exception ex)
@@ -161,6 +173,7 @@ namespace ImageViewer
             }
             return image;
         }
+
 
         /// <summary>
         /// 画像を回転させる

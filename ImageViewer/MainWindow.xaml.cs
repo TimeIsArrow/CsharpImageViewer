@@ -16,6 +16,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;   //Debug
 using Microsoft.Win32;      //OpenFileDialog
+using MahApps.Metro.Controls; // MetroWindow
+
 
 
 namespace ImageViewer
@@ -23,7 +25,7 @@ namespace ImageViewer
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         // ファイルリスト
         List<string> fileList = new List<string>();
@@ -47,8 +49,8 @@ namespace ImageViewer
         /// <summary>
         /// オリジナルコマンド用RoutedCommand
         /// </summary>
-        public static readonly RoutedCommand ViewFullScreen
-            = new RoutedCommand("ViewFullScreenCmd", typeof(MainWindow));   // 全画面表示コマンド
+        public static readonly RoutedCommand showFullScreen
+            = new RoutedCommand("showFullScreenCmd", typeof(MainWindow));   // 全画面表示コマンド
         public static readonly RoutedCommand Zoom 
             = new RoutedCommand("ZoomCmd", typeof(MainWindow));             // 画像拡大コマンド
         public static readonly RoutedCommand Reduction
@@ -68,7 +70,11 @@ namespace ImageViewer
             = new RoutedCommand("GetNextImageCmd", typeof(MainWindow));     // 次の画像を取得
         public static readonly RoutedCommand getPrevImage
             = new RoutedCommand("GetPrevImageCmd", typeof(MainWindow));     // 前の画像を取得
-        
+
+        public static readonly RoutedCommand showFileList
+            = new RoutedCommand("ShowFileListCmd", typeof(MainWindow));     // ファイルリストの表示・非表示
+        public static readonly RoutedCommand selectShowFileList
+            = new RoutedCommand("selectShowFileListCmd", typeof(MainWindow));   // ファイルリストの項目を選択
 
         public MainWindow()
         {
@@ -108,12 +114,29 @@ namespace ImageViewer
                     imageHandle = new BitmapImage();
                     imageHandle = controller.Init();
                     pictureview1.Source = imageHandle;
-                    imageHeight = imageHandle.Height;
-                    imageWidth = imageHandle.Width;
+                    imageHeight = imageHandle.PixelHeight;
+                    imageWidth = imageHandle.PixelWidth;
                     ScaleTransform scale = (ScaleTransform)trans.Children[0];
+
+                    if (fileListBox.Items != null)
+                    {
+                        fileListBox.Items.Clear();
+                    }
+                    BitmapImage src;
+                    System.Windows.Controls.Image thumb;
+                    foreach (string item in controller.FileList)
+                    {
+                        thumb = new System.Windows.Controls.Image();
+                        thumb.Margin = new Thickness(10);
+                        src = new BitmapImage();
+                        src.BeginInit();
+                        src.UriSource = new Uri(item);
+                        src.DecodePixelWidth=150;
+                        src.EndInit();
+                        thumb.Source = src;
+                        fileListBox.Items.Add(thumb);
+                    }
                     
-                    Debug.WriteLine("scale x: " + scale.ScaleX);
-                    Debug.WriteLine("scale y: " + scale.ScaleY);
                 }
             }
             catch(Exception ex)
@@ -171,7 +194,7 @@ namespace ImageViewer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ViewFullScreenCmd_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void showFullScreenCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             isFullScreen = !isFullScreen;
             if (isFullScreen == true)
@@ -186,6 +209,41 @@ namespace ImageViewer
                 this.WindowState = WindowState.Normal;
                 this.Topmost = false;
             }
+        }
+
+        /// <summary>
+        /// ファイルリストの表示非表示
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void showFileListCmd_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (showFileListMenu.IsChecked)
+            {
+                mainGrid.ColumnDefinitions[0].Width = GridLength.Auto;
+            }
+            else
+            {
+                mainGrid.ColumnDefinitions[0].Width = new GridLength(0);
+            }
+            
+        }
+
+        /// <summary>
+        /// ファイルリストの項目を選択した際の動作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void selectShowFileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RotateTransform rotate = (RotateTransform)trans.Children[1];
+            imageHandle = controller.getSelectedImage(fileListBox.SelectedIndex);
+            pictureview1.Source = imageHandle;
+            rotate.Angle = 0;
+            imageHeight = imageHandle.PixelHeight;
+            imageWidth = imageHandle.PixelWidth;
+
+            Debug.WriteLine("selected item");
         }
 
         /// <summary>
@@ -222,10 +280,8 @@ namespace ImageViewer
                 
             }
 
-            scale.CenterX = pictureview1.ActualWidth / 2;
-            scale.CenterY = pictureview1.ActualHeight / 2;
-            Debug.WriteLine("Scale X: " + scale.ScaleX);
-            Debug.WriteLine("Scale Y: " + scale.ScaleY);
+            scale.CenterX = scrollviewer1.ActualWidth / 2;
+            scale.CenterY = scrollviewer1.ActualHeight / 2;
         }
 
         /// <summary>
@@ -273,18 +329,19 @@ namespace ImageViewer
         {
             ScaleTransform scale = (ScaleTransform)trans.Children[0];
 
-            if (imageHandle.PixelWidth > imageHandle.PixelHeight)
+            double scalex = scrollviewer1.ActualWidth / imageWidth;
+            double scaley = scrollviewer1.ActualHeight / imageHeight;
+
+            if (scalex > scaley)
             {
-                scale.ScaleX = this.ActualWidth / imageWidth;
-                scale.ScaleY = this.ActualWidth / imageWidth;
+                scale.ScaleX = scaley;
+                scale.ScaleY = scaley;
             }
             else
             {
-                scale.ScaleX = this.ActualHeight / imageHeight;
-                scale.ScaleY = this.ActualHeight / imageHeight;
+                scale.ScaleX = scalex;
+                scale.ScaleY = scalex;
             }
-            Debug.WriteLine("image width: " + scrollviewer1.ActualWidth);
-            Debug.WriteLine("image height: " + scrollviewer1.ActualHeight);
 
         }
 
@@ -296,14 +353,13 @@ namespace ImageViewer
         private void FitWidthCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             ScaleTransform scale = (ScaleTransform)trans.Children[0];
-            
-            double x = this.ActualWidth / imageWidth;
-            double y = this.ActualWidth / imageWidth;
+
+            double x = scrollviewer1.ActualWidth / imageWidth;
+            double y = scrollviewer1.ActualWidth / imageWidth;
 
             scale.ScaleX = x;
             scale.ScaleY = y;
             
-            Debug.WriteLine("FitWidth");
         }
 
         /// <summary>
@@ -323,11 +379,13 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void getNextImageCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            RotateTransform rotate = (RotateTransform)trans.Children[1];
             imageHandle = controller.getNextImage();
-            pictureview1.Source = imageHandle;            
-            Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
-            imageHeight = imageHandle.Height;
-            imageWidth = imageHandle.Width;
+            pictureview1.Source = imageHandle;
+            rotate.Angle = 0;
+            imageHeight = imageHandle.PixelHeight;
+            imageWidth = imageHandle.PixelWidth;
+            
         }
 
         /// <summary>
@@ -337,11 +395,12 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void getPrevImageCmd_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            RotateTransform rotate = (RotateTransform)trans.Children[1];
             imageHandle = controller.getPrevImage();
             pictureview1.Source = imageHandle;
-            Debug.WriteLine("CurrentNum:" + controller.currentImageNum);
-            imageHeight = imageHandle.Height;
-            imageWidth = imageHandle.Width;
+            rotate.Angle = 0;
+            imageHeight = imageHandle.PixelHeight;
+            imageWidth = imageHandle.PixelWidth;
         }
 
         /// <summary>
@@ -351,6 +410,7 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void imageControll_CanExecuted(object sender, CanExecuteRoutedEventArgs e)
         {
+            // 画像が読み込まれているか?
             if (imageHandle != null)
             {
                 e.CanExecute = true;
