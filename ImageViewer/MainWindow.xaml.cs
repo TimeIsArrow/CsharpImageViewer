@@ -199,7 +199,7 @@ namespace ImageViewer
             isFullScreen = !isFullScreen;
             if (isFullScreen == true)
             {
-                this.WindowStyle = WindowStyle.None;
+                //this.WindowStyle = WindowStyle.None;
                 this.WindowState = WindowState.Maximized;
                 this.Topmost = true;
             }
