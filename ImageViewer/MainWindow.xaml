@@ -49,6 +49,9 @@
         <CommandBinding Command="{x:Static c:MainWindow.showFileList}" CanExecute="imageControll_CanExecuted" Executed="showFileListCmd_Executed"/>
         <!-- [ヘルプ]-[バージョン情報]用コマンド -->
         <CommandBinding Command="{x:Static c:MainWindow.ShowVersion}" Executed="ShowVersionCmd_Executed"/>
+        
+        <!-- 画像のタグリスト表示用コマンド -->
+        <CommandBinding Command="{x:Static c:MainWindow.showImageTags}" CanExecute="imageControll_CanExecuted" Executed="ShowImageTagsCmd_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <!-- 次の画像を表示コマンド -->
@@ -117,7 +120,7 @@
             </MenuItem>
         </Menu>
         <StackPanel Name="imageTags" Grid.Row="1" Grid.Column="0" Height="100" Grid.ColumnSpan="2" Panel.ZIndex="2" 
-                    Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Gray" Opacity="0.40">
+                    Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Gray" Opacity="0.40" Visibility="Hidden">
             <Button Content="{StaticResource appbar_add}" 
                      Margin="30,10,30,10" Style="{DynamicResource MetroCircleButtonStyle}" />
         </StackPanel>
@@ -130,7 +133,7 @@
                   HorizontalAlignment="Left" Height="Auto" VerticalAlignment="Top" Width="Auto" BorderBrush="Transparent"/>
         
         <StackPanel Name="ButtonDock" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="{StaticResource appbar_tag}" 
+            <Button Content="{StaticResource appbar_tag}" Command="{x:Static c:MainWindow.showImageTags}"
                      Margin="30,10,30,10" Style="{DynamicResource MetroCircleButtonStyle}" />
             
             <Button Content="{StaticResource appbar_navigate_previous}" Command="{x:Static c:MainWindow.getPrevImage}" 

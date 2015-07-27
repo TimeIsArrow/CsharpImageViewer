@@ -77,7 +77,7 @@ namespace ImageViewer
             = new RoutedCommand("selectShowFileListCmd", typeof(MainWindow));   // ファイルリストの項目を選択
 
         public static readonly RoutedCommand showImageTags
-            = new RoutedCommand("ShowImageTagsCmd", typeof(MainWindow));
+            = new RoutedCommand("ShowImageTagsCmd", typeof(MainWindow));    // イメージタグの表示
 
         public MainWindow()
         {
@@ -106,6 +106,8 @@ namespace ImageViewer
 
             // フルスクリーンフラグの設定
             isFullScreen = false;
+
+            
 
             // ファイルダイアログの表示
             try
@@ -239,12 +241,15 @@ namespace ImageViewer
         /// <param name="e"></param>
         private void selectShowFileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RotateTransform rotate = (RotateTransform)trans.Children[1];
-            imageHandle = controller.getSelectedImage(fileListBox.SelectedIndex);
-            pictureview1.Source = imageHandle;
-            rotate.Angle = 0;
-            imageHeight = imageHandle.PixelHeight;
-            imageWidth = imageHandle.PixelWidth;
+            if (fileListBox.Items.Count > 0)
+            {
+                RotateTransform rotate = (RotateTransform)trans.Children[1];
+                imageHandle = controller.getSelectedImage(fileListBox.SelectedIndex);
+                pictureview1.Source = imageHandle;
+                rotate.Angle = 0;
+                imageHeight = imageHandle.PixelHeight;
+                imageWidth = imageHandle.PixelWidth;
+            }             
         }
 
         /// <summary>
@@ -402,6 +407,18 @@ namespace ImageViewer
             rotate.Angle = 0;
             imageHeight = imageHandle.PixelHeight;
             imageWidth = imageHandle.PixelWidth;
+        }
+
+        private void ShowImageTagsCmd_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (imageTags.Visibility == Visibility.Hidden)
+            {
+                imageTags.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                imageTags.Visibility = Visibility.Hidden;
+            }
         }
 
         /// <summary>
