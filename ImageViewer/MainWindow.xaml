@@ -4,7 +4,8 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:c="clr-namespace:ImageViewer"
         Title="画像ビューア" Height="396" Width="704"
-        GlowBrush="{DynamicResource AccentColorBrush}">
+        GlowBrush="{DynamicResource AccentColorBrush}"
+                      Icon="pack://application:,,,/Resources/icon500.png">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -115,11 +116,19 @@
                 <MenuItem Header="バージョン情報" Command="{x:Static c:MainWindow.ShowVersion}"/>
             </MenuItem>
         </Menu>
-        <ScrollViewer Grid.Column="1" Name="scrollviewer1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <StackPanel Name="imageTags" Grid.Row="1" Grid.Column="0" Height="100" Grid.ColumnSpan="2" Panel.ZIndex="2" 
+                    Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Gray" Opacity="0.40">
+            <Button Content="{StaticResource appbar_add}" 
+                     Margin="30,10,30,10" Style="{DynamicResource MetroCircleButtonStyle}" />
+        </StackPanel>
+        
+        <ScrollViewer Grid.Column="1" Name="scrollviewer1" Grid.Row="1" Panel.ZIndex="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Image Name="pictureview1" Stretch="None" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </ScrollViewer>
+        
         <ListBox  Name="fileListBox" Grid.Column="0" Grid.Row="1" SelectionChanged="selectShowFileList_SelectionChanged"
                   HorizontalAlignment="Left" Height="Auto" VerticalAlignment="Top" Width="Auto" BorderBrush="Transparent"/>
+        
         <StackPanel Name="ButtonDock" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="{StaticResource appbar_tag}" 
                      Margin="30,10,30,10" Style="{DynamicResource MetroCircleButtonStyle}" />

@@ -76,6 +76,9 @@ namespace ImageViewer
         public static readonly RoutedCommand selectShowFileList
             = new RoutedCommand("selectShowFileListCmd", typeof(MainWindow));   // ファイルリストの項目を選択
 
+        public static readonly RoutedCommand showImageTags
+            = new RoutedCommand("ShowImageTagsCmd", typeof(MainWindow));
+
         public MainWindow()
         {
             InitializeComponent();
@@ -242,8 +245,6 @@ namespace ImageViewer
             rotate.Angle = 0;
             imageHeight = imageHandle.PixelHeight;
             imageWidth = imageHandle.PixelWidth;
-
-            Debug.WriteLine("selected item");
         }
 
         /// <summary>
